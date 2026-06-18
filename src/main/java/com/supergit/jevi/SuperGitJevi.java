@@ -16,17 +16,32 @@ import picocli.CommandLine.Option;
              SuperCommitCommand.class,
              SuperStatusCommand.class,
              SuperBranchCommand.class,
-             SuperHistoryCommand.class
+             SuperHistoryCommand.class,
+             com.supergit.jevi.commands.SuperPushCommand.class
          })
 public class SuperGitJevi implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("🐦 SuperGit-Jevi에 오신 것을 환영합니다!");
-        System.out.println("슈퍼한 Git 경험을 제공합니다.");
+        com.supergit.jevi.core.TUIHelper.printBox("🐦 SuperGit-Jevi에 오신 것을 환영합니다!", 
+            com.supergit.jevi.core.TUIHelper.BoxStyle.INFO);
+        
+        System.out.println("슈퍼한 Git 경험을 제공하는 TUI 도구입니다.");
         System.out.println();
-        System.out.println("사용법: jevi <command> [options]");
-        System.out.println("도움말: jevi --help");
+        
+        com.supergit.jevi.core.TUIHelper.printInfo("📌 사용 가능한 명령어:");
+        System.out.println("  • jevi status     - 저장소 상태 확인");
+        System.out.println("  • jevi commit     - 변경사항 커밋");
+        System.out.println("  • jevi push       - 안전하게 Push (자동 fetch+pull)");
+        System.out.println("  • jevi branch     - 브랜치 관리");
+        System.out.println("  • jevi history    - 커밋 히스토리");
+        System.out.println();
+        
+        com.supergit.jevi.core.TUIHelper.printSuccess("더 많은 정보: jevi --help");
+        System.out.println();
+        
+        com.supergit.jevi.core.TUIHelper.printBox("🛡️ 안전 기능: Push 전 자동 fetch+pull로 충돌 방지!", 
+            com.supergit.jevi.core.TUIHelper.BoxStyle.SUCCESS);
     }
 
     public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package com.supergit.jevi;
 
+import com.supergit.jevi.core.TUIHelper;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.revwalk.RevCommit;
 import picocli.CommandLine.Command;
@@ -29,9 +30,8 @@ public class SuperHistoryCommand implements Runnable {
             File currentDir = new File(System.getProperty("user.dir"));
             Git git = Git.open(currentDir);
 
-            System.out.println("🐦 SuperGit-Jevi 커밋 히스토리");
-            System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            System.out.println();
+            String subtitle = showAll ? "전체 커밋 히스토리" : "최근 " + maxCount + "개 커밋";
+            TUIHelper.printHeader("SuperGit-Jevi 커밋 히스토리", subtitle);
 
             Iterable<RevCommit> commits;
             if (showAll) {
@@ -45,22 +45,31 @@ public class SuperHistoryCommand implements Runnable {
 
             for (RevCommit commit : commits) {
                 count++;
-                System.out.println("📌 커밋 #" + count);
-                System.out.println("   🔑 해시: " + commit.getName().substring(0, 7));
-                System.out.println("   👤 작성자: " + commit.getAuthorIdent().getName());
-                System.out.println("   📅 날짜: " + dateFormat.format(new Date(commit.getCommitTime() * 1000L)));
-                System.out.println("   💬 메시지: " + commit.getShortMessage());
-                System.out.println();
+                
+                TUIHelper.printTableRow(
+                    "#" + count + " " + commit.getName().substring(0, 7),
+                    commit.getShortMessage(),
+                    commit.getAuthorIdent().getName()
+                );
+                
+                TUIHelper.printInfo("    📅 " + dateFormat.format(new Date(commit.getCommitTime() * 1000L)));
+                
+                if (count < maxCount || showAll) {
+                    System.out.println();
+                }
             }
 
             if (count == 0) {
-                System.out.println("아직 커밋이 없습니다.");
+                TUIHelper.printBox("아직 커밋이 없습니다", TUIHelper.BoxStyle.INFO);
+            } else {
+                TUIHelper.printDivider();
+                TUIHelper.printSuccess("총 " + count + "개의 커밋을 표시했습니다");
             }
 
             git.close();
 
         } catch (Exception e) {
-            System.err.println("❌ 히스토리 조회 중 오류 발생: " + e.getMessage());
+            TUIHelper.printError("❌ 히스토리 조회 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
         }
     }

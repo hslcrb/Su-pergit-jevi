@@ -1,7 +1,9 @@
 package com.supergit.jevi;
 
+import com.supergit.jevi.core.TUIHelper;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.revwalk.RevCommit;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -29,15 +31,29 @@ public class SuperCommitCommand implements Runnable {
             File currentDir = new File(System.getProperty("user.dir"));
             Git git = Git.open(currentDir);
 
+            TUIHelper.printHeader("SuperGit-Jevi Commit", "제비처럼 빠르게 커밋합니다");
+
             // 상태 확인
             Status status = git.status().call();
             
-            System.out.println("🐦 제비처럼 빠르게 커밋을 준비합니다...");
+            if (status.isClean() && !addAll) {
+                TUIHelper.printBox("커밋할 변경사항이 없습니다", TUIHelper.BoxStyle.INFO);
+                git.close();
+                return;
+            }
             
             if (addAll) {
-                // 모든 변경사항 추가
-                git.add().addFilepattern(".").call();
-                System.out.println("✅ 모든 변경사항이 스테이징되었습니다.");
+                TUIHelper.printStep("모든 변경사항을 스테이징 중...");
+                
+                // 수정된 파일들 표시
+                int fileCount = status.getModified().size() + 
+                               status.getUntracked().size() + 
+                               status.getRemoved().size();
+                
+                if (fileCount > 0) {
+                    git.add().addFilepattern(".").call();
+                    TUIHelper.printSuccess("✅ " + fileCount + "개 파일이 스테이징되었습니다");
+                }
             }
 
             // 커밋 메시지 처리
@@ -46,18 +62,24 @@ public class SuperCommitCommand implements Runnable {
                 finalMessage = message + " [" + java.time.LocalDateTime.now() + "]";
             }
 
+            TUIHelper.printDivider();
+            TUIHelper.printStep("커밋 생성 중...");
+
             // 커밋 실행
-            git.commit()
+            RevCommit commit = git.commit()
                .setMessage(finalMessage)
                .call();
 
-            System.out.println("✨ 슈퍼 커밋 완료!");
-            System.out.println("💬 메시지: " + finalMessage);
+            TUIHelper.printSuccess("✨ 슈퍼 커밋 완료!");
+            TUIHelper.printInfo("🔑 커밋 해시: " + commit.getName().substring(0, 7));
+            TUIHelper.printInfo("💬 메시지: " + finalMessage);
+            
+            TUIHelper.printBox("커밋이 성공적으로 생성되었습니다! 🎉", TUIHelper.BoxStyle.SUCCESS);
             
             git.close();
 
         } catch (Exception e) {
-            System.err.println("❌ 커밋 중 오류 발생: " + e.getMessage());
+            TUIHelper.printError("❌ 커밋 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
         }
     }

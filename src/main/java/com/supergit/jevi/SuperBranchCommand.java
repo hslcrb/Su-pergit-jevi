@@ -1,5 +1,6 @@
 package com.supergit.jevi;
 
+import com.supergit.jevi.core.TUIHelper;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
 import picocli.CommandLine.Command;
@@ -35,8 +36,7 @@ public class SuperBranchCommand implements Runnable {
 
             if (list || (branchName == null && !create && !delete)) {
                 // 브랜치 목록 표시
-                System.out.println("🐦 브랜치 목록:");
-                System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                TUIHelper.printHeader("브랜치 목록", "현재 저장소의 모든 브랜치");
                 
                 List<Ref> branches = git.branchList().call();
                 String currentBranch = git.getRepository().getBranch();
@@ -44,29 +44,44 @@ public class SuperBranchCommand implements Runnable {
                 for (Ref ref : branches) {
                     String name = ref.getName().replace("refs/heads/", "");
                     if (name.equals(currentBranch)) {
-                        System.out.println("  * 🌟 " + name + " (현재)");
+                        TUIHelper.printSuccess("* " + name + " (현재)");
                     } else {
-                        System.out.println("    🌿 " + name);
+                        TUIHelper.printInfo("  " + name);
                     }
                 }
+                
+                TUIHelper.printDivider();
+                TUIHelper.printInfo("총 " + branches.size() + "개의 브랜치");
+                
             } else if (create && branchName != null) {
+                TUIHelper.printHeader("브랜치 생성", "새로운 브랜치를 만듭니다");
+                
                 // 새 브랜치 생성
                 git.branchCreate()
                    .setName(branchName)
                    .call();
-                System.out.println("✨ 새 브랜치 생성됨: " + branchName);
+                   
+                TUIHelper.printSuccess("✨ 새 브랜치 생성됨: " + branchName);
+                TUIHelper.printBox("브랜치 '" + branchName + "'이 생성되었습니다!", TUIHelper.BoxStyle.SUCCESS);
+                
             } else if (delete && branchName != null) {
-                // 브랜치 삭제
-                git.branchDelete()
-                   .setBranchNames(branchName)
-                   .call();
-                System.out.println("🗑️  브랜치 삭제됨: " + branchName);
+                TUIHelper.printHeader("브랜치 삭제", "브랜치를 삭제합니다");
+                
+                if (TUIHelper.confirm("정말로 브랜치 '" + branchName + "'을(를) 삭제하시겠습니까?")) {
+                    // 브랜치 삭제
+                    git.branchDelete()
+                       .setBranchNames(branchName)
+                       .call();
+                    TUIHelper.printSuccess("🗑️  브랜치 삭제됨: " + branchName);
+                } else {
+                    TUIHelper.printInfo("삭제가 취소되었습니다.");
+                }
             }
 
             git.close();
 
         } catch (Exception e) {
-            System.err.println("❌ 브랜치 작업 중 오류 발생: " + e.getMessage());
+            TUIHelper.printError("❌ 브랜치 작업 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
         }
     }
