@@ -2,7 +2,6 @@ package com.supergit.jevi.commands;
 
 import com.supergit.jevi.core.TUIHelper;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.lib.Ref;
 
 /**
@@ -38,7 +37,8 @@ public class ResetCommand {
             TUIHelper.printStep("되돌리는 중...");
             
             Ref ref = git.reset()
-                .setMode(hard ? ResetCommand.ResetType.HARD : ResetCommand.ResetType.SOFT)
+                .setMode(hard ? org.eclipse.jgit.api.ResetCommand.ResetType.HARD : 
+                              org.eclipse.jgit.api.ResetCommand.ResetType.SOFT)
                 .setRef(target)
                 .call();
             
