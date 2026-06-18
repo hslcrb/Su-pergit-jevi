@@ -57,9 +57,16 @@ public class InteractiveMenu {
         System.out.println("  [4] 브랜치 관리 (Branch)");
         System.out.println("  [5] 커밋 히스토리 (History)");
         System.out.println("  [6] 원격에서 Pull");
+        System.out.println();
+        System.out.println("  === 고급 기능 ===");
         System.out.println("  [7] 커밋 되돌리기 (Reset)");
         System.out.println("  [8] 충돌 해결 (Conflict Resolver)");
         System.out.println("  [9] 저장소 초기화/복제 (Init/Clone)");
+        System.out.println("  [10] 커밋 탐색기 (Explore)");
+        System.out.println("  [11] 스마트 검색 (Search)");
+        System.out.println("  [12] 스마트 비교 (Diff)");
+        System.out.println("  [13] 임시 저장 (Stash)");
+        System.out.println();
         System.out.println("  [h] 도움말 (Help)");
         System.out.println("  [0] 종료 (Exit)");
         TUIHelper.printDivider();
@@ -79,6 +86,10 @@ public class InteractiveMenu {
             case "7" -> doReset();
             case "8" -> resolveConflicts();
             case "9" -> initOrClone();
+            case "10" -> exploreCommits();
+            case "11" -> smartSearch();
+            case "12" -> smartDiff();
+            case "13" -> smartStash();
             case "h", "H" -> showHelp();
             case "0" -> {
                 TUIHelper.printSuccess("SuperGit-Jevi를 종료합니다. 안녕히 가세요!");
@@ -359,5 +370,29 @@ public class InteractiveMenu {
         System.out.println();
         System.out.print("계속하려면 Enter를 누르세요...");
         scanner.nextLine();
+    }
+    
+    private void exploreCommits() {
+        CommitExplorerCommand cmd = new CommitExplorerCommand(git, scanner);
+        cmd.execute();
+        pressEnterToContinue();
+    }
+    
+    private void smartSearch() {
+        SmartSearchCommand cmd = new SmartSearchCommand(git, scanner);
+        cmd.execute();
+        pressEnterToContinue();
+    }
+    
+    private void smartDiff() {
+        SmartDiffCommand cmd = new SmartDiffCommand(git, scanner);
+        cmd.execute();
+        pressEnterToContinue();
+    }
+    
+    private void smartStash() {
+        SmartStashCommand cmd = new SmartStashCommand(git, scanner);
+        cmd.execute();
+        pressEnterToContinue();
     }
 }
