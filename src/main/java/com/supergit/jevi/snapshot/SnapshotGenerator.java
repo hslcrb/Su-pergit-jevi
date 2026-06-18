@@ -187,8 +187,13 @@ public class SnapshotGenerator {
                 String path = treeWalk.getPathString();
                 SnapshotData.CurrentFile file = new SnapshotData.CurrentFile();
                 file.exists = true;
-                file.size = treeWalk.getObjectReader().getSize(
-                    treeWalk.getObjectId(0), org.eclipse.jgit.lib.Constants.OBJ_BLOB);
+                try {
+                    ObjectReader reader = treeWalk.getObjectReader();
+                    file.size = reader.getObjectSize(
+                        treeWalk.getObjectId(0), org.eclipse.jgit.lib.Constants.OBJ_BLOB);
+                } catch (Exception e) {
+                    file.size = 0; // 크기를 가져올 수 없는 경우 0으로 설정
+                }
                 file.lastModified = DATE_FORMAT.format(
                     new Date(latestCommit.getCommitTime() * 1000L));
                 
