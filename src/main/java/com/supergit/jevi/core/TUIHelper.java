@@ -24,7 +24,7 @@ public class TUIHelper {
     public static void printBox(String message, BoxStyle style) {
         int displayWidth = getDisplayWidth(message);
         int boxWidth = Math.max(60, displayWidth + 4);
-        String horizontal = "═".repeat(boxWidth - 2);
+        String horizontal = "=".repeat(boxWidth - 2);
         
         Ansi.Color color = switch (style) {
             case INFO -> CYAN;
@@ -33,14 +33,14 @@ public class TUIHelper {
             case ERROR -> RED;
         };
         
-        System.out.println(ansi().fg(color).a("╔" + horizontal + "╗").reset());
+        System.out.println(ansi().fg(color).a("+" + horizontal + "+").reset());
         
         // 중앙 정렬을 위한 패딩 계산
         String centeredText = centerTextWithWidth(message, boxWidth - 4);
-        System.out.println(ansi().fg(color).a("║ ").reset()
+        System.out.println(ansi().fg(color).a("| ").reset()
             .bold().a(centeredText).reset()
-            .fg(color).a(" ║").reset());
-        System.out.println(ansi().fg(color).a("╚" + horizontal + "╝").reset());
+            .fg(color).a(" |").reset());
+        System.out.println(ansi().fg(color).a("+" + horizontal + "+").reset());
         System.out.println();
     }
     
@@ -50,7 +50,7 @@ public class TUIHelper {
     public static void printProgress(String label, int current, int total) {
         int barLength = 30;
         int filled = (int) ((double) current / total * barLength);
-        String bar = "█".repeat(filled) + "░".repeat(barLength - filled);
+        String bar = "#".repeat(filled) + ".".repeat(barLength - filled);
         int percentage = (int) ((double) current / total * 100);
         
         System.out.print("\r" + ansi()
@@ -68,7 +68,7 @@ public class TUIHelper {
      */
     public static void printStep(String message) {
         System.out.println(ansi()
-            .fg(BLUE).a("▶ ").reset()
+            .fg(BLUE).a("> ").reset()
             .a(message).reset());
     }
     
@@ -77,7 +77,7 @@ public class TUIHelper {
      */
     public static void printSuccess(String message) {
         System.out.println(ansi()
-            .fg(GREEN).bold().a("✓ ").reset()
+            .fg(GREEN).bold().a("[성공] ").reset()
             .fg(GREEN).a(message).reset());
     }
     
@@ -86,7 +86,7 @@ public class TUIHelper {
      */
     public static void printError(String message) {
         System.out.println(ansi()
-            .fg(RED).bold().a("✗ ").reset()
+            .fg(RED).bold().a("[에러] ").reset()
             .fg(RED).a(message).reset());
     }
     
@@ -95,7 +95,7 @@ public class TUIHelper {
      */
     public static void printWarning(String message) {
         System.out.println(ansi()
-            .fg(YELLOW).bold().a("⚠ ").reset()
+            .fg(YELLOW).bold().a("[경고] ").reset()
             .fg(YELLOW).a(message).reset());
     }
     
@@ -104,7 +104,7 @@ public class TUIHelper {
      */
     public static void printInfo(String message) {
         System.out.println(ansi()
-            .fg(CYAN).a("ℹ ").reset()
+            .fg(CYAN).a("[정보] ").reset()
             .a(message).reset());
     }
     
@@ -114,15 +114,15 @@ public class TUIHelper {
     public static void printHeader(String title, String subtitle) {
         System.out.println();
         System.out.println(ansi()
-            .fg(MAGENTA).bold().a("═══════════════════════════════════════════════════════════").reset());
+            .fg(MAGENTA).bold().a("===============================================================").reset());
         System.out.println(ansi()
-            .fg(MAGENTA).bold().a("  🐦 " + title).reset());
+            .fg(MAGENTA).bold().a("  " + title).reset());
         if (subtitle != null && !subtitle.isEmpty()) {
             System.out.println(ansi()
                 .fg(CYAN).a("  " + subtitle).reset());
         }
         System.out.println(ansi()
-            .fg(MAGENTA).bold().a("═══════════════════════════════════════════════════════════").reset());
+            .fg(MAGENTA).bold().a("===============================================================").reset());
         System.out.println();
     }
     
@@ -131,20 +131,20 @@ public class TUIHelper {
      */
     public static void printDivider() {
         System.out.println(ansi()
-            .fg(CYAN).a("───────────────────────────────────────────────────────────").reset());
+            .fg(CYAN).a("---------------------------------------------------------------").reset());
     }
     
     /**
      * 파일 상태 표시
      */
     public static void printFileStatus(String status, String filename) {
-        String icon = switch (status.toUpperCase()) {
-            case "MODIFIED" -> "📝";
-            case "ADDED" -> "➕";
-            case "DELETED" -> "🗑️";
-            case "UNTRACKED" -> "❓";
-            case "CONFLICTING" -> "⚔️";
-            default -> "📄";
+        String prefix = switch (status.toUpperCase()) {
+            case "MODIFIED" -> "M";
+            case "ADDED" -> "A";
+            case "DELETED" -> "D";
+            case "UNTRACKED" -> "?";
+            case "CONFLICTING" -> "!";
+            default -> " ";
         };
         
         Ansi.Color color = switch (status.toUpperCase()) {
@@ -157,8 +157,8 @@ public class TUIHelper {
         };
         
         System.out.println(ansi()
-            .a("  " + icon + " ")
-            .fg(color).a(filename).reset());
+            .a("  ")
+            .fg(color).a(prefix + " " + filename).reset());
     }
     
     /**
@@ -220,7 +220,7 @@ public class TUIHelper {
      */
     public static boolean confirm(String message) {
         System.out.print(ansi()
-            .fg(YELLOW).a("❓ " + message + " (y/N): ").reset());
+            .fg(YELLOW).a("[확인] " + message + " (y/N): ").reset());
         
         try {
             java.util.Scanner scanner = new java.util.Scanner(System.in);
