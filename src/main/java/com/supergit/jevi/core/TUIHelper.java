@@ -22,8 +22,9 @@ public class TUIHelper {
      * 박스로 감싼 메시지 출력
      */
     public static void printBox(String message, BoxStyle style) {
-        int width = Math.max(60, message.length() + 4);
-        String horizontal = "═".repeat(width - 2);
+        int displayWidth = getDisplayWidth(message);
+        int boxWidth = Math.max(60, displayWidth + 4);
+        String horizontal = "═".repeat(boxWidth - 2);
         
         Ansi.Color color = switch (style) {
             case INFO -> CYAN;
@@ -33,8 +34,11 @@ public class TUIHelper {
         };
         
         System.out.println(ansi().fg(color).a("╔" + horizontal + "╗").reset());
+        
+        // 중앙 정렬을 위한 패딩 계산
+        String centeredText = centerTextWithWidth(message, boxWidth - 4);
         System.out.println(ansi().fg(color).a("║ ").reset()
-            .bold().a(centerText(message, width - 4)).reset()
+            .bold().a(centeredText).reset()
             .fg(color).a(" ║").reset());
         System.out.println(ansi().fg(color).a("╚" + horizontal + "╝").reset());
         System.out.println();
@@ -171,12 +175,44 @@ public class TUIHelper {
     }
     
     /**
-     * 텍스트 중앙 정렬
+     * 문자열의 실제 디스플레이 폭 계산 (한글은 2칸)
+     */
+    private static int getDisplayWidth(String text) {
+        int width = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            // 한글, 한자, 전각 문자는 2칸
+            if ((c >= 0xAC00 && c <= 0xD7A3) ||  // 한글
+                (c >= 0x4E00 && c <= 0x9FFF) ||  // 한자
+                (c >= 0x3040 && c <= 0x30FF) ||  // 히라가나, 가타카나
+                (c >= 0xFF00 && c <= 0xFFEF)) {  // 전각 문자
+                width += 2;
+            } else {
+                width += 1;
+            }
+        }
+        return width;
+    }
+    
+    /**
+     * 텍스트 중앙 정렬 (디스플레이 폭 고려)
+     */
+    private static String centerTextWithWidth(String text, int targetWidth) {
+        int textWidth = getDisplayWidth(text);
+        if (textWidth >= targetWidth) return text;
+        
+        int totalPadding = targetWidth - textWidth;
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+        
+        return " ".repeat(leftPadding) + text + " ".repeat(rightPadding);
+    }
+    
+    /**
+     * 텍스트 중앙 정렬 (하위 호환용)
      */
     private static String centerText(String text, int width) {
-        if (text.length() >= width) return text;
-        int padding = (width - text.length()) / 2;
-        return " ".repeat(padding) + text + " ".repeat(width - text.length() - padding);
+        return centerTextWithWidth(text, width);
     }
     
     /**
