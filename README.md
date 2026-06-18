@@ -980,6 +980,35 @@ mvn clean package
 
 이슈 및 Pull Request는 환영합니다!
 
+## 웹 버전
+
+SuperGit-Jevi는 웹 버전도 제공합니다!
+
+### SuperGit-Jevi Web
+
+브라우저에서 직접 실행되는 웹 버전입니다.
+
+**특징:**
+- 🌐 완전한 클라이언트 사이드 (서버 불필요)
+- 📁 File System Access API로 로컬 폴더 접근
+- 🖥️ xterm.js 기반 터미널 UI
+- 🔒 모든 데이터는 로컬에만 저장
+
+**시작하기:**
+\`\`\`bash
+cd webapp
+npm install
+npm run dev
+# http://localhost:3000 열기
+\`\`\`
+
+**브라우저 요구사항:**
+- Chrome/Edge 86+
+- Safari 15.2+
+- (Firefox는 현재 미지원 - File System Access API 없음)
+
+**자세한 내용:** [webapp/README.md](webapp/README.md)
+
 ## 라이선스
 
 MIT License - [LICENSE](LICENSE) 파일 참조
