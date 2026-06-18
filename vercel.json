@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "supergit-jevi-web",
+  "builds": [
+    {
+      "src": "webapp/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "webapp/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  },
+  "github": {
+    "silent": true
+  }
+}

@@ -33,3 +33,28 @@ hs_err_pid*
 # OS
 .DS_Store
 Thumbs.db
+
+# Next.js / Webapp
+webapp/node_modules/
+webapp/.next/
+webapp/out/
+webapp/.cache/
+webapp/dist/
+webapp/.vercel
+
+# Environment
+webapp/.env
+webapp/.env*.local
+
+# Debug
+webapp/npm-debug.log*
+webapp/yarn-debug.log*
+webapp/yarn-error.log*
+
+# Testing
+webapp/coverage/
+webapp/.nyc_output/
+
+# Misc
+webapp/.DS_Store
+webapp/Thumbs.db

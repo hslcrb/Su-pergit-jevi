@@ -263,6 +263,44 @@ EXPOSE 3000
 CMD ["npm", "start"]
 \`\`\`
 
+## 배포
+
+### Vercel (권장)
+
+**빠른 배포:**
+```bash
+# Vercel CLI 설치
+npm install -g vercel
+
+# 로그인
+vercel login
+
+# 배포
+vercel
+
+# 프로덕션 배포
+vercel --prod
+```
+
+**또는 배포 스크립트 사용:**
+```bash
+./deploy.sh
+```
+
+**GitHub 연동:**
+1. GitHub에 푸시
+2. https://vercel.com 에서 프로젝트 Import
+3. Root Directory를 `webapp`로 설정
+4. Deploy 클릭
+
+**자세한 내용:** [DEPLOYMENT.md](DEPLOYMENT.md)
+
+### 기타 호스팅
+
+- **Netlify**: netlify.toml 설정 후 배포
+- **Cloudflare Pages**: 대시보드에서 프로젝트 연동
+- **GitHub Pages**: `npm run build && npm run export`
+
 ## 트러블슈팅
 
 ### "showDirectoryPicker is not defined"
