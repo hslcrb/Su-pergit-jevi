@@ -217,47 +217,253 @@ public class InteractiveMenu {
     private void showHelp() {
         TUIHelper.printHeader("도움말", "SuperGit-Jevi 사용 가이드");
         
-        System.out.println("SuperGit-Jevi는 Git을 더 쉽고 안전하게 사용할 수 있게 해주는 도구입니다.");
+        System.out.println("SuperGit-Jevi는 Git을 더 쉽고 안전하게 사용할 수 있게 해주는 TUI 도구입니다.");
+        System.out.println("제비처럼 빠르지만, 안전장치를 통해 실수를 방지합니다.");
         System.out.println();
         
-        System.out.println("[주요 기능]");
-        System.out.println("1. 상태 확인: 현재 저장소의 변경사항을 확인합니다");
-        System.out.println("2. 커밋: 변경사항을 저장합니다");
-        System.out.println("3. Push: 원격 저장소로 업로드합니다 (자동으로 충돌 방지)");
-        System.out.println("4. 브랜치 관리: 브랜치를 만들고 전환하고 삭제합니다");
-        System.out.println("5. 히스토리: 과거 커밋 기록을 확인합니다");
-        System.out.println("6. Pull: 원격 저장소의 최신 변경사항을 받아옵니다");
-        System.out.println("7. Reset: 이전 커밋으로 되돌립니다");
-        System.out.println("8. 충돌 해결: 병합 충돌을 자동으로 해결합니다");
-        System.out.println("9. Init/Clone: 새 저장소를 만들거나 복제합니다");
-        System.out.println("10. 커밋 탐색기: 과거 커밋을 깊이 탐색합니다");
-        System.out.println("11. 스마트 검색: 다양한 방식으로 검색합니다");
-        System.out.println("12. 스마트 비교: 변경사항을 비교합니다");
-        System.out.println("13. 임시 저장: Stash로 작업을 보관합니다");
-        System.out.println("14. 스냅샷 (AI): AI Agent를 위한 통합 저장소 뷰");
+        TUIHelper.printDivider();
+        System.out.println("[기본 기능 - Human용]");
+        TUIHelper.printDivider();
         System.out.println();
         
-        System.out.println("[AI Agent를 위한 Snapshot 기능]");
-        System.out.println("- 저장소의 모든 히스토리와 현재 상태를 통합");
-        System.out.println("- JSON 또는 TEXT 형식으로 출력");
-        System.out.println("- 파일별 전체 진화 과정 추적");
-        System.out.println("- 삭제된 파일 포함 가상 파일 시스템");
-        System.out.println("- AI가 저장소를 완전히 이해할 수 있는 컨텍스트 제공");
+        System.out.println("  [1] 상태 확인 (Status)");
+        System.out.println("      - 현재 저장소의 변경사항 확인");
+        System.out.println("      - 수정/추가/삭제된 파일 분류 표시");
+        System.out.println("      - 사용 시점: 작업 시작 전, 커밋 전 항상 확인");
         System.out.println();
         
-        System.out.println("[안전 기능]");
-        System.out.println("- Push 전 자동으로 fetch와 pull을 수행합니다");
-        System.out.println("- 충돌이 있으면 Push를 차단합니다");
-        System.out.println("- 자동 충돌 해결 기능으로 병합 충돌을 해결합니다");
-        System.out.println("- 브랜치 삭제 시 확인을 요청합니다");
+        System.out.println("  [2] 변경사항 커밋 (Commit)");
+        System.out.println("      - 변경사항을 저장소에 기록");
+        System.out.println("      - 변경 파일 미리보기 제공");
+        System.out.println("      - 사용 시점: 의미있는 작업 단위 완료 시");
         System.out.println();
         
-        System.out.println("[초보자 팁]");
-        System.out.println("- 작업 순서: 상태 확인 -> 커밋 -> Push");
-        System.out.println("- 커밋은 자주 하는 것이 좋습니다 (작은 단위로)");
-        System.out.println("- Push 전에는 항상 최신 상태를 확인합니다");
-        System.out.println("- 브랜치를 사용하면 안전하게 실험할 수 있습니다");
-        System.out.println("- Reset은 신중하게 사용하세요 (특히 HARD 모드)");
+        System.out.println("  [3] 원격 저장소로 Push (안전 모드)");
+        System.out.println("      - 단계1: 자동 Fetch (원격 상태 확인)");
+        System.out.println("      - 단계2: 자동 Pull (최신 변경사항 받기)");
+        System.out.println("      - 단계3: 충돌 검사");
+        System.out.println("      - 단계4: 안전한 경우만 Push 실행");
+        System.out.println("      - 사용 시점: 로컬 커밋을 팀과 공유할 때");
+        System.out.println();
+        
+        System.out.println("  [4] 브랜치 관리 (Branch)");
+        System.out.println("      - 브랜치 목록 보기, 생성, 전환, 삭제");
+        System.out.println("      - 안전장치: 삭제 시 확인 요청");
+        System.out.println("      - 사용 시점: 새 기능 개발, 실험적 작업");
+        System.out.println();
+        
+        System.out.println("  [5] 커밋 히스토리 (History)");
+        System.out.println("      - 과거 커밋 기록 확인");
+        System.out.println("      - 해시, 메시지, 작성자, 날짜 표시");
+        System.out.println("      - 사용 시점: 과거 작업 추적, 버그 발생 시점 파악");
+        System.out.println();
+        
+        System.out.println("  [6] 원격에서 Pull");
+        System.out.println("      - 원격 저장소의 최신 변경사항 가져오기");
+        System.out.println("      - 로컬 작업과 병합");
+        System.out.println("      - 사용 시점: 작업 시작 전, 팀원 변경사항 반영");
+        System.out.println();
+        
+        pressEnterToContinue();
+        System.out.print("\033[H\033[2J"); // 화면 클리어
+        System.out.flush();
+        
+        TUIHelper.printHeader("도움말 (계속)", "고급 기능");
+        
+        TUIHelper.printDivider();
+        System.out.println("[고급 기능]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  [7] 커밋 되돌리기 (Reset)");
+        System.out.println("      - SOFT: 커밋만 취소, 변경사항은 유지");
+        System.out.println("      - HARD: 모든 것 삭제 (주의!)");
+        System.out.println("      - 1-10개 커밋 되돌리기 가능");
+        System.out.println("      - 사용 시점: 잘못된 커밋 수정, 과거로 복원");
+        System.out.println();
+        
+        System.out.println("  [8] 충돌 해결 (Conflict Resolver)");
+        System.out.println("      - OURS: 로컬 변경사항 우선");
+        System.out.println("      - THEIRS: 원격 변경사항 우선");
+        System.out.println("      - APPEND BOTH: 양쪽 모두 병합 (타임스탬프 추가)");
+        System.out.println("      - 사용 시점: Push 차단 시, 병합 충돌 발생 시");
+        System.out.println();
+        
+        System.out.println("  [9] 저장소 초기화/복제 (Init/Clone)");
+        System.out.println("      - Init: 새 Git 저장소 초기화");
+        System.out.println("      - Clone: 원격 저장소 복제");
+        System.out.println("      - 사용 시점: 프로젝트 시작, 협업 저장소 받기");
+        System.out.println();
+        
+        System.out.println("  [10] 커밋 탐색기 (Commit Explorer)");
+        System.out.println("      - 커밋 상세 정보 및 변경 파일 목록");
+        System.out.println("      - Diff 보기, 특정 파일 내용 확인");
+        System.out.println("      - 시간 여행: 과거 커밋으로 체크아웃");
+        System.out.println("      - Cherry-pick: 특정 커밋만 가져오기");
+        System.out.println("      - 사용 시점: 버그 추적, 과거 코드 분석");
+        System.out.println();
+        
+        System.out.println("  [11] 스마트 검색 (Smart Search)");
+        System.out.println("      - 커밋 메시지, 작성자, 날짜로 검색");
+        System.out.println("      - 코드 검색: 파일 내용에서 텍스트 찾기 (줄 번호 표시)");
+        System.out.println("      - 파일명 검색: 특정 파일의 커밋 이력");
+        System.out.println("      - 사용 시점: 특정 변경사항 찾기, 코드 추적");
+        System.out.println();
+        
+        System.out.println("  [12] 스마트 비교 (Smart Diff)");
+        System.out.println("      - 작업 디렉토리 vs HEAD");
+        System.out.println("      - 두 커밋 간 비교");
+        System.out.println("      - 브랜치 간 비교");
+        System.out.println("      - 사용 시점: 변경사항 확인, 브랜치 차이 분석");
+        System.out.println();
+        
+        System.out.println("  [13] 임시 저장 (Smart Stash)");
+        System.out.println("      - 현재 작업 임시 보관 (메시지 추가 가능)");
+        System.out.println("      - Pop: 복원 후 삭제");
+        System.out.println("      - Apply: 복원하되 보관 유지");
+        System.out.println("      - 사용 시점: 급한 작업 전환, 실험적 작업 보관");
+        System.out.println();
+        
+        pressEnterToContinue();
+        System.out.print("\033[H\033[2J"); // 화면 클리어
+        System.out.flush();
+        
+        TUIHelper.printHeader("도움말 (계속)", "AI 기능 및 사용 팁");
+        
+        TUIHelper.printDivider();
+        System.out.println("[AI Agent 전용 기능]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  [14] 스냅샷 (Snapshot)");
+        System.out.println("      - 저장소의 모든 히스토리와 현재 상태를 통합");
+        System.out.println("      - JSON (AI 최적화) 또는 TEXT (Human) 형식");
+        System.out.println("      - 파일별 전체 진화 과정 추적 (생성->수정->삭제)");
+        System.out.println("      - 삭제된 파일 포함 가상 파일 시스템");
+        System.out.println("      - 사용 예시:");
+        System.out.println("        * AI 에이전트가 코드베이스 전체 이해");
+        System.out.println("        * 자동 문서화, Release Notes 생성");
+        System.out.println("        * 버그 패턴 분석 및 리팩토링 제안");
+        System.out.println();
+        
+        TUIHelper.printDivider();
+        System.out.println("[안전 시스템]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  SuperGit-Jevi의 핵심은 '안전성'입니다:");
+        System.out.println();
+        System.out.println("  1. Push 전 3단계 검사");
+        System.out.println("     Fetch -> Pull -> 충돌 검사 -> Push");
+        System.out.println();
+        System.out.println("  2. Pull 없이 Push 하는 인재(人災) 시스템 차단");
+        System.out.println("     더 이상 '아차!' 하는 실수가 없습니다");
+        System.out.println();
+        System.out.println("  3. 위험한 작업 시 확인 요청");
+        System.out.println("     브랜치 삭제, HARD Reset 등");
+        System.out.println();
+        System.out.println("  4. 자동 충돌 해결");
+        System.out.println("     3가지 전략으로 병합 충돌 자동 처리");
+        System.out.println();
+        
+        TUIHelper.printDivider();
+        System.out.println("[초보자를 위한 워크플로우]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  일반적인 작업 순서:");
+        System.out.println();
+        System.out.println("  1. [6] Pull - 작업 시작 전 최신 상태로");
+        System.out.println("  2. 코드 수정 작업");
+        System.out.println("  3. [1] Status - 변경사항 확인");
+        System.out.println("  4. [2] Commit - 의미있는 단위로 커밋");
+        System.out.println("  5. [3] Push - 안전하게 공유");
+        System.out.println();
+        System.out.println("  충돌 발생 시:");
+        System.out.println();
+        System.out.println("  1. [3] Push 시도 -> 차단됨");
+        System.out.println("  2. [8] 충돌 해결 선택");
+        System.out.println("  3. 전략 선택 (OURS/THEIRS/APPEND)");
+        System.out.println("  4. [2] Commit으로 병합 저장");
+        System.out.println("  5. [3] Push 재시도 -> 성공!");
+        System.out.println();
+        
+        TUIHelper.printDivider();
+        System.out.println("[빌드 및 실행]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  빌드 명령어:");
+        System.out.println("    mvn clean package");
+        System.out.println();
+        System.out.println("  빌드 + 즉시 실행:");
+        System.out.println("    mvn clean package && java -jar target/supergit-jevi.jar");
+        System.out.println();
+        System.out.println("  빠른 빌드 (테스트 생략):");
+        System.out.println("    mvn clean package -DskipTests");
+        System.out.println();
+        System.out.println("  별칭 설정 후:");
+        System.out.println("    jevi  # 어디서든 실행");
+        System.out.println();
+        
+        TUIHelper.printDivider();
+        System.out.println("[유용한 팁]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  커밋 관련:");
+        System.out.println("  - 커밋은 자주, 작은 단위로 하세요");
+        System.out.println("  - 커밋 메시지는 명확하게 (무엇을, 왜)");
+        System.out.println("  - 관련된 변경사항끼리 묶어서 커밋");
+        System.out.println();
+        
+        System.out.println("  브랜치 관련:");
+        System.out.println("  - 새 기능은 별도 브랜치에서 작업");
+        System.out.println("  - main 브랜치는 항상 안정적으로 유지");
+        System.out.println("  - 브랜치 이름은 의미있게 (feature/login, bugfix/issue-123)");
+        System.out.println();
+        
+        System.out.println("  협업 관련:");
+        System.out.println("  - 작업 시작 전 항상 Pull");
+        System.out.println("  - 퇴근 전 Push (팀과 공유)");
+        System.out.println("  - 충돌은 빨리 해결할수록 쉬움");
+        System.out.println();
+        
+        System.out.println("  Reset 사용:");
+        System.out.println("  - SOFT: 커밋만 취소, 코드는 남김 (안전)");
+        System.out.println("  - HARD: 모든 것 삭제 (신중하게!)");
+        System.out.println("  - Reset 후에는 force push 필요할 수 있음 (주의)");
+        System.out.println();
+        
+        TUIHelper.printDivider();
+        System.out.println("[문제 해결]");
+        TUIHelper.printDivider();
+        System.out.println();
+        
+        System.out.println("  Push가 차단되면?");
+        System.out.println("  -> [8] 충돌 해결 메뉴 사용");
+        System.out.println();
+        
+        System.out.println("  잘못 커밋했으면?");
+        System.out.println("  -> [7] Reset으로 되돌리기");
+        System.out.println();
+        
+        System.out.println("  과거 코드 확인하려면?");
+        System.out.println("  -> [10] 커밋 탐색기의 시간 여행 기능");
+        System.out.println();
+        
+        System.out.println("  특정 변경사항 찾으려면?");
+        System.out.println("  -> [11] 스마트 검색");
+        System.out.println();
+        
+        System.out.println("  급하게 다른 작업해야 하면?");
+        System.out.println("  -> [13] Stash로 현재 작업 임시 저장");
+        System.out.println();
+        
+        System.out.println();
+        System.out.println("  더 자세한 정보는 README.md를 참조하세요!");
+        System.out.println("  GitHub: https://github.com/yourusername/supergit-jevi");
+        System.out.println();
         
         pressEnterToContinue();
     }

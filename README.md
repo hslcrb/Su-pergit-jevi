@@ -741,6 +741,54 @@ flowchart LR
     주로 버그 수정이 많았습니다. 리팩토링 권장합니다."
 ```
 
+## 도움말
+
+SuperGit-Jevi 내에서 언제든지 `h` 키를 입력하여 상세한 도움말을 볼 수 있습니다.
+
+### 도움말 메뉴 내용
+
+도움말에서는 다음 정보를 제공합니다:
+
+- **기본 기능**: 각 기능의 상세 설명과 사용 시점
+- **고급 기능**: 커밋 탐색기, 스마트 검색, 충돌 해결 등
+- **AI 기능**: 스냅샷 기능의 활용법
+- **안전 시스템**: Push 전 자동 검사 프로세스
+- **워크플로우**: 초보자를 위한 단계별 가이드
+- **빌드 명령어**: Maven 빌드 및 실행 방법
+- **유용한 팁**: 커밋, 브랜치, 협업 관련 모범 사례
+- **문제 해결**: 일반적인 문제 상황과 해결 방법
+
+### 빠른 참조
+
+**자주 사용하는 명령어:**
+
+```
+[1] Status     # 변경사항 확인
+[2] Commit     # 커밋하기
+[3] Push       # 안전하게 Push
+[6] Pull       # 최신 변경사항 받기
+[h] Help       # 상세 도움말
+[0] Exit       # 종료
+```
+
+**문제 해결:**
+
+```
+Push 차단?         → [8] 충돌 해결
+잘못 커밋?         → [7] Reset
+과거 코드 확인?    → [10] 커밋 탐색기
+변경사항 찾기?     → [11] 스마트 검색
+급한 작업 전환?    → [13] Stash
+```
+
+**안전 팁:**
+
+- 작업 시작 전 항상 Pull
+- 커밋은 자주, 작은 단위로
+- Push 전 Status로 확인
+- 브랜치로 실험하기
+- HARD Reset은 신중하게
+
 ## 기술 스택
 
 - **언어**: Java 17
@@ -751,13 +799,92 @@ flowchart LR
 
 ## 빌드 및 배포
 
-### 개발 빌드
+### 빠른 빌드 가이드
+
+SuperGit-Jevi는 Maven을 사용하여 빌드합니다.
+
+#### 전체 빌드 (권장)
 
 ```bash
+# 클린 빌드 - 모든 이전 빌드 삭제 후 새로 빌드
 mvn clean package
+
+# 빌드 완료 후 실행
+java -jar target/supergit-jevi.jar
 ```
 
-### 릴리스 빌드
+#### 빠른 빌드 (변경사항만)
+
+```bash
+# clean 없이 빌드 (더 빠름)
+mvn package
+
+# 실행
+java -jar target/supergit-jevi.jar
+```
+
+#### 테스트 건너뛰기 빌드
+
+```bash
+# 테스트 생략하고 빌드 (가장 빠름)
+mvn clean package -DskipTests
+
+# 실행
+java -jar target/supergit-jevi.jar
+```
+
+#### 빌드 + 즉시 실행 (One-liner)
+
+**Linux/macOS:**
+```bash
+mvn clean package && java -jar target/supergit-jevi.jar
+```
+
+**Windows (PowerShell):**
+```powershell
+mvn clean package; if ($?) { java -jar target/supergit-jevi.jar }
+```
+
+**Windows (CMD):**
+```cmd
+mvn clean package && java -jar target/supergit-jevi.jar
+```
+
+### 빌드 스크립트 사용
+
+편의를 위해 제공되는 빌드 스크립트:
+
+**Linux/macOS:**
+```bash
+# 실행 권한 부여
+chmod +x build-release.sh jevi.sh
+
+# 빌드 및 실행
+./build-release.sh
+./jevi.sh
+```
+
+**Windows:**
+```cmd
+# 빌드 및 실행
+build-release.bat
+jevi.bat
+```
+
+### 빌드 출력물
+
+빌드 성공 시 생성되는 파일:
+
+```
+target/
+├── supergit-jevi.jar           # Fat JAR (모든 의존성 포함)
+├── supergit-jevi-1.0.0.jar     # 원본 JAR (의존성 없음)
+└── classes/                    # 컴파일된 클래스 파일
+```
+
+**중요**: `supergit-jevi.jar` 파일을 사용하세요 (모든 의존성 포함된 버전)
+
+### 릴리스 빌드 (배포용)
 
 **Linux/macOS:**
 ```bash
@@ -770,8 +897,66 @@ build-release.bat
 ```
 
 생성 파일:
-- `release/supergit-jevi-{version}-unix.tar.gz`
-- `release/supergit-jevi-{version}-windows.zip`
+- `release/supergit-jevi-{version}-unix.tar.gz` (Linux/macOS용)
+- `release/supergit-jevi-{version}-windows.zip` (Windows용)
+
+### Maven 의존성 업데이트
+
+의존성을 최신 버전으로 업데이트:
+
+```bash
+# 의존성 버전 확인
+mvn versions:display-dependency-updates
+
+# 의존성 업데이트 (신중하게!)
+mvn versions:use-latest-releases
+```
+
+### 빌드 문제 해결
+
+**문제 1: "mvn: command not found"**
+```bash
+# Maven 설치 확인
+mvn -version
+
+# Ubuntu/Debian
+sudo apt install maven
+
+# Fedora/RHEL
+sudo dnf install maven
+
+# macOS
+brew install maven
+
+# Windows - Chocolatey
+choco install maven
+```
+
+**문제 2: 빌드 실패 - 의존성 다운로드 오류**
+```bash
+# Maven 캐시 삭제
+rm -rf ~/.m2/repository
+
+# 다시 빌드
+mvn clean package
+```
+
+**문제 3: Java 버전 불일치**
+```bash
+# 현재 Java 버전 확인
+java -version
+
+# Java 17 이상 필요
+# pom.xml에서 확인:
+# <maven.compiler.source>17</maven.compiler.source>
+```
+
+**문제 4: 메모리 부족**
+```bash
+# Maven 힙 메모리 증가
+export MAVEN_OPTS="-Xmx1024m"
+mvn clean package
+```
 
 ## 트러블슈팅
 
