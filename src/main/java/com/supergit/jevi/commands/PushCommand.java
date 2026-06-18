@@ -3,7 +3,6 @@ package com.supergit.jevi.commands;
 import com.supergit.jevi.core.GitSafetyManager;
 import com.supergit.jevi.core.TUIHelper;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.transport.PushResult;
 
 /**
@@ -35,7 +34,7 @@ public class PushCommand {
 
             TUIHelper.printStep("원격 저장소로 Push 중...");
             
-            PushCommand pushCommand = git.push();
+            org.eclipse.jgit.api.PushCommand pushCommand = git.push();
             Iterable<PushResult> results = pushCommand.call();
             
             for (PushResult result : results) {
