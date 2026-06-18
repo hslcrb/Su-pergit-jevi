@@ -152,6 +152,39 @@ sequenceDiagram
     end
 ```
 
+## 시스템 요구사항
+
+- Java 17 이상
+- Git 설치 (권장)
+- 지원 OS: **Windows, Linux, macOS** (플랫폼 독립적!)
+
+## 빠른 설치
+
+### Windows 사용자
+
+1. [Java 17 다운로드](https://adoptium.net/)
+2. SuperGit-Jevi 릴리스 다운로드
+3. 압축 해제 후 `jevi.bat` 더블클릭 또는 cmd에서 실행:
+   ```cmd
+   jevi.bat
+   ```
+
+### Linux/macOS 사용자
+
+```bash
+# 저장소 클론 & 빌드
+git clone https://github.com/yourusername/supergit-jevi.git
+cd supergit-jevi
+mvn clean package
+
+# 실행
+./jevi.sh
+# 또는
+java -jar target/supergit-jevi.jar
+```
+
+**상세 설치 가이드**: [INSTALL.md](INSTALL.md) 참고
+
 ## 설치
 
 ```bash
@@ -350,6 +383,24 @@ SuperGit-Jevi는 이런 인재를 **시스템 레벨에서 방지**합니다!
 5. 원래 브랜치로 복귀
 6. [13] Stash Pop - 작업 복원하고 계속
 ```
+
+## 릴리스 빌드 방법
+
+프로젝트 배포를 위한 릴리스 빌드:
+
+### Linux/macOS:
+```bash
+./build-release.sh
+```
+
+### Windows:
+```cmd
+build-release.bat
+```
+
+생성되는 파일:
+- `supergit-jevi-{version}-unix.tar.gz` (Linux/macOS용)
+- `supergit-jevi-{version}-windows.zip` (Windows용)
 
 ## 라이센스
 
