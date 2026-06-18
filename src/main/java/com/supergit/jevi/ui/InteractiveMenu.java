@@ -51,23 +51,26 @@ public class InteractiveMenu {
         TUIHelper.printDivider();
         System.out.println("주 메뉴 - 원하는 작업을 선택하세요:");
         TUIHelper.printDivider();
-        System.out.println("  [1] 상태 확인 (Status)");
-        System.out.println("  [2] 변경사항 커밋 (Commit)");
-        System.out.println("  [3] 원격 저장소로 Push (안전 모드)");
-        System.out.println("  [4] 브랜치 관리 (Branch)");
-        System.out.println("  [5] 커밋 히스토리 (History)");
-        System.out.println("  [6] 원격에서 Pull");
+        System.out.println("  [1] 상태 확인 (Status) (for human)");
+        System.out.println("  [2] 변경사항 커밋 (Commit) (for human)");
+        System.out.println("  [3] 원격 저장소로 Push (안전 모드) (for human)");
+        System.out.println("  [4] 브랜치 관리 (Branch) (for human)");
+        System.out.println("  [5] 커밋 히스토리 (History) (for human)");
+        System.out.println("  [6] 원격에서 Pull (for human)");
         System.out.println();
         System.out.println("  === 고급 기능 ===");
-        System.out.println("  [7] 커밋 되돌리기 (Reset)");
-        System.out.println("  [8] 충돌 해결 (Conflict Resolver)");
-        System.out.println("  [9] 저장소 초기화/복제 (Init/Clone)");
-        System.out.println("  [10] 커밋 탐색기 (Explore)");
-        System.out.println("  [11] 스마트 검색 (Search)");
-        System.out.println("  [12] 스마트 비교 (Diff)");
-        System.out.println("  [13] 임시 저장 (Stash)");
+        System.out.println("  [7] 커밋 되돌리기 (Reset) (for human)");
+        System.out.println("  [8] 충돌 해결 (Conflict Resolver) (for human)");
+        System.out.println("  [9] 저장소 초기화/복제 (Init/Clone) (for human)");
+        System.out.println("  [10] 커밋 탐색기 (Explore) (for human)");
+        System.out.println("  [11] 스마트 검색 (Search) (for human)");
+        System.out.println("  [12] 스마트 비교 (Diff) (for human)");
+        System.out.println("  [13] 임시 저장 (Stash) (for human)");
         System.out.println();
-        System.out.println("  [h] 도움말 (Help)");
+        System.out.println("  === AI Agent 기능 ===");
+        System.out.println("  [14] 스냅샷 (Snapshot) (for AI) - 통합 저장소 뷰");
+        System.out.println();
+        System.out.println("  [h] 도움말 (Help) (for human, AI)");
         System.out.println("  [0] 종료 (Exit)");
         TUIHelper.printDivider();
         System.out.print("선택 > ");
@@ -90,6 +93,7 @@ public class InteractiveMenu {
             case "11" -> smartSearch();
             case "12" -> smartDiff();
             case "13" -> smartStash();
+            case "14" -> generateSnapshot();
             case "h", "H" -> showHelp();
             case "0" -> {
                 TUIHelper.printSuccess("SuperGit-Jevi를 종료합니다. 안녕히 가세요!");
@@ -226,6 +230,19 @@ public class InteractiveMenu {
         System.out.println("7. Reset: 이전 커밋으로 되돌립니다");
         System.out.println("8. 충돌 해결: 병합 충돌을 자동으로 해결합니다");
         System.out.println("9. Init/Clone: 새 저장소를 만들거나 복제합니다");
+        System.out.println("10. 커밋 탐색기: 과거 커밋을 깊이 탐색합니다");
+        System.out.println("11. 스마트 검색: 다양한 방식으로 검색합니다");
+        System.out.println("12. 스마트 비교: 변경사항을 비교합니다");
+        System.out.println("13. 임시 저장: Stash로 작업을 보관합니다");
+        System.out.println("14. 스냅샷 (AI): AI Agent를 위한 통합 저장소 뷰");
+        System.out.println();
+        
+        System.out.println("[AI Agent를 위한 Snapshot 기능]");
+        System.out.println("- 저장소의 모든 히스토리와 현재 상태를 통합");
+        System.out.println("- JSON 또는 TEXT 형식으로 출력");
+        System.out.println("- 파일별 전체 진화 과정 추적");
+        System.out.println("- 삭제된 파일 포함 가상 파일 시스템");
+        System.out.println("- AI가 저장소를 완전히 이해할 수 있는 컨텍스트 제공");
         System.out.println();
         
         System.out.println("[안전 기능]");
@@ -392,6 +409,12 @@ public class InteractiveMenu {
     
     private void smartStash() {
         SmartStashCommand cmd = new SmartStashCommand(git, scanner);
+        cmd.execute();
+        pressEnterToContinue();
+    }
+    
+    private void generateSnapshot() {
+        SnapshotCommand cmd = new SnapshotCommand(git, scanner);
         cmd.execute();
         pressEnterToContinue();
     }
