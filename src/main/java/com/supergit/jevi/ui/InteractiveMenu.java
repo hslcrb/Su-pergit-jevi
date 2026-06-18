@@ -1,6 +1,7 @@
 package com.supergit.jevi.ui;
 
 import com.supergit.jevi.commands.*;
+import com.supergit.jevi.core.ConflictResolver;
 import com.supergit.jevi.core.TUIHelper;
 import org.eclipse.jgit.api.Git;
 
@@ -56,7 +57,10 @@ public class InteractiveMenu {
         System.out.println("  [4] 브랜치 관리 (Branch)");
         System.out.println("  [5] 커밋 히스토리 (History)");
         System.out.println("  [6] 원격에서 Pull");
-        System.out.println("  [7] 도움말 (Help)");
+        System.out.println("  [7] 커밋 되돌리기 (Reset)");
+        System.out.println("  [8] 충돌 해결 (Conflict Resolver)");
+        System.out.println("  [9] 저장소 초기화/복제 (Init/Clone)");
+        System.out.println("  [h] 도움말 (Help)");
         System.out.println("  [0] 종료 (Exit)");
         TUIHelper.printDivider();
         System.out.print("선택 > ");
@@ -72,12 +76,15 @@ public class InteractiveMenu {
             case "4" -> manageBranches();
             case "5" -> showHistory();
             case "6" -> doPull();
-            case "7" -> showHelp();
+            case "7" -> doReset();
+            case "8" -> resolveConflicts();
+            case "9" -> initOrClone();
+            case "h", "H" -> showHelp();
             case "0" -> {
                 TUIHelper.printSuccess("SuperGit-Jevi를 종료합니다. 안녕히 가세요!");
                 running = false;
             }
-            default -> TUIHelper.printWarning("잘못된 입력입니다. 0-7 사이의 숫자를 입력하세요.");
+            default -> TUIHelper.printWarning("잘못된 입력입니다. 메뉴에서 선택하세요.");
         }
     }
     
@@ -205,11 +212,15 @@ public class InteractiveMenu {
         System.out.println("4. 브랜치 관리: 브랜치를 만들고 전환하고 삭제합니다");
         System.out.println("5. 히스토리: 과거 커밋 기록을 확인합니다");
         System.out.println("6. Pull: 원격 저장소의 최신 변경사항을 받아옵니다");
+        System.out.println("7. Reset: 이전 커밋으로 되돌립니다");
+        System.out.println("8. 충돌 해결: 병합 충돌을 자동으로 해결합니다");
+        System.out.println("9. Init/Clone: 새 저장소를 만들거나 복제합니다");
         System.out.println();
         
         System.out.println("[안전 기능]");
         System.out.println("- Push 전 자동으로 fetch와 pull을 수행합니다");
         System.out.println("- 충돌이 있으면 Push를 차단합니다");
+        System.out.println("- 자동 충돌 해결 기능으로 병합 충돌을 해결합니다");
         System.out.println("- 브랜치 삭제 시 확인을 요청합니다");
         System.out.println();
         
@@ -218,7 +229,129 @@ public class InteractiveMenu {
         System.out.println("- 커밋은 자주 하는 것이 좋습니다 (작은 단위로)");
         System.out.println("- Push 전에는 항상 최신 상태를 확인합니다");
         System.out.println("- 브랜치를 사용하면 안전하게 실험할 수 있습니다");
+        System.out.println("- Reset은 신중하게 사용하세요 (특히 HARD 모드)");
         
+        pressEnterToContinue();
+    }
+    
+    private void doReset() {
+        System.out.print("되돌릴 커밋 개수 (1-10): ");
+        String input = scanner.nextLine().trim();
+        
+        int count = 1;
+        try {
+            count = Integer.parseInt(input);
+            if (count < 1 || count > 10) {
+                TUIHelper.printWarning("1-10 사이의 숫자를 입력하세요.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            TUIHelper.printWarning("올바른 숫자를 입력하세요.");
+            return;
+        }
+        
+        System.out.print("HARD 모드로 되돌리시겠습니까? (모든 변경사항 삭제) (y/n): ");
+        boolean hard = scanner.nextLine().trim().equalsIgnoreCase("y");
+        
+        if (hard) {
+            TUIHelper.printWarning("경고: HARD 모드는 모든 변경사항을 삭제합니다!");
+            System.out.print("정말로 진행하시겠습니까? (yes 입력): ");
+            if (!scanner.nextLine().trim().equalsIgnoreCase("yes")) {
+                TUIHelper.printInfo("취소되었습니다.");
+                return;
+            }
+        }
+        
+        ResetCommand cmd = new ResetCommand(git, count, hard);
+        cmd.execute();
+        pressEnterToContinue();
+    }
+    
+    private void resolveConflicts() {
+        ConflictResolver resolver = new ConflictResolver(git);
+        
+        if (!resolver.hasConflicts()) {
+            TUIHelper.printInfo("현재 충돌이 없습니다.");
+            pressEnterToContinue();
+            return;
+        }
+        
+        TUIHelper.printHeader("충돌 해결", "자동으로 병합 충돌을 해결합니다");
+        
+        System.out.println("충돌 파일:");
+        for (String file : resolver.getConflictingFiles()) {
+            System.out.println("  - " + file);
+        }
+        System.out.println();
+        
+        System.out.println("해결 전략 선택:");
+        System.out.println("  [1] 로컬 변경사항 우선 (OURS)");
+        System.out.println("  [2] 원격 변경사항 우선 (THEIRS)");
+        System.out.println("  [3] 둘 다 병합 (더미 공백 추가)");
+        System.out.println("  [0] 취소");
+        System.out.print("선택 > ");
+        
+        String choice = scanner.nextLine().trim();
+        
+        ConflictResolver.ResolveStrategy strategy = switch (choice) {
+            case "1" -> ConflictResolver.ResolveStrategy.ACCEPT_OURS;
+            case "2" -> ConflictResolver.ResolveStrategy.ACCEPT_THEIRS;
+            case "3" -> ConflictResolver.ResolveStrategy.APPEND_BOTH;
+            default -> null;
+        };
+        
+        if (strategy == null) {
+            TUIHelper.printInfo("취소되었습니다.");
+        } else {
+            boolean success = resolver.autoResolve(strategy);
+            if (success) {
+                TUIHelper.printSuccess("충돌이 해결되었습니다! 이제 커밋할 수 있습니다.");
+            } else {
+                TUIHelper.printWarning("일부 충돌은 수동으로 해결해야 합니다.");
+            }
+        }
+        
+        pressEnterToContinue();
+    }
+    
+    private void initOrClone() {
+        System.out.println();
+        System.out.println("저장소 초기화/복제:");
+        System.out.println("  [1] 새 저장소 초기화 (Init)");
+        System.out.println("  [2] 원격 저장소 복제 (Clone)");
+        System.out.println("  [0] 뒤로 가기");
+        System.out.print("선택 > ");
+        
+        String choice = scanner.nextLine().trim();
+        
+        switch (choice) {
+            case "1" -> {
+                System.out.print("초기화할 경로 (Enter = 현재 디렉토리): ");
+                String path = scanner.nextLine().trim();
+                if (path.isEmpty()) {
+                    path = System.getProperty("user.dir");
+                }
+                InitCommand cmd = new InitCommand(path);
+                cmd.execute();
+            }
+            case "2" -> {
+                System.out.print("원격 저장소 URL: ");
+                String url = scanner.nextLine().trim();
+                System.out.print("복제할 경로: ");
+                String path = scanner.nextLine().trim();
+                
+                if (!url.isEmpty() && !path.isEmpty()) {
+                    CloneCommand cmd = new CloneCommand(url, path);
+                    cmd.execute();
+                } else {
+                    TUIHelper.printWarning("URL과 경로를 모두 입력해야 합니다.");
+                }
+            }
+            case "0" -> {
+                return;
+            }
+            default -> TUIHelper.printWarning("잘못된 선택입니다.");
+        }
         pressEnterToContinue();
     }
     
